@@ -1,0 +1,27 @@
+{
+  "name": "visual-ingest",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "VISUAL_INGEST_SMOKE=1 vitest run tests/smoke.test.ts"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.0",
+    "pdfjs-dist": "^6.0.227",
+    "sharp": "^0.34.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.14.29",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0",
+    "zod": "^3.25.0"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.14.0",
+    "zod": ">=3.25.0"
+  }
+}
