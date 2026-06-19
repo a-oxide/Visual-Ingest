@@ -1,36 +1,42 @@
 import { processFile } from "../dist/pipeline.js";
 import { parseConfig } from "../dist/config.js";
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+
+const pdfPath = process.argv[2];
+if (!pdfPath) {
+  console.error("Usage: node scripts/evaluate-paccar.mjs <path-to-pdf>");
+  console.error("Example: node scripts/evaluate-paccar.mjs ./test-document.pdf");
+  process.exit(1);
+}
 
 const config = parseConfig(undefined);
-const pdfPath = "/srv/dev-disk-by-uuid-5c46439b-4f75-459d-9ec9-ebfef0ef3709/Pool/copyparty/Cross-Platform/PDF_Plugin_Benchmark/PACCAR_Total Rewards Guide_2026_US Salaried-2.pdf";
+const projectDir = join(process.cwd(), "eval-tmp");
+const outputPath = join(process.cwd(), "docs", "eval-output.txt");
 
-console.log("Processing PACCAR PDF (22 pages, ~6.9MB)...");
-console.log("This will take several minutes (22 vision API calls, concurrency 4)...");
+console.log(`Processing: ${pdfPath}`);
+console.log(`Output: ${outputPath}`);
+console.log("(This will take several minutes for large PDFs)");
 
 const start = Date.now();
-const results = await processFile(pdfPath, {
+const results = await processFile(resolve(pdfPath), {
   config,
-  projectDir: "/tmp/vi-paccar-eval",
+  projectDir,
 });
 const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 
 console.log(`\nCompleted in ${elapsed}s — ${results.length} pages processed`);
 
-// Build a full text dump for evaluation
 let fullOutput = "";
 for (const r of results) {
   fullOutput += `\n${"=".repeat(80)}\nPAGE ${r.page} (${r.class}, ${r.merged.length} chars, vision: ${r.vision_status})\n${"=".repeat(80)}\n\n${r.merged}\n`;
 }
 
-mkdirSync("/root/Visual-Ingest/docs", { recursive: true });
-const outputPath = "/root/Visual-Ingest/docs/paccar-eval-output.txt";
+mkdirSync(join(process.cwd(), "docs"), { recursive: true });
 writeFileSync(outputPath, fullOutput);
 console.log(`Full output written to: ${outputPath}`);
 console.log(`Total output size: ${(fullOutput.length / 1024).toFixed(1)} KB`);
 
-// Summary
 const classCounts = {};
 for (const r of results) {
   classCounts[r.class] = (classCounts[r.class] || 0) + 1;

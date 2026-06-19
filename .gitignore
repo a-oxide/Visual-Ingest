@@ -1,3 +1,4 @@
 node_modules/
 *.tsbuildinfo
+docs/eval-output.txt
 docs/paccar-eval-output.txt
