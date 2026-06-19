@@ -76,6 +76,7 @@ describe("store", () => {
     const pageData = {
       page: 1,
       class: "text-rich" as const,
+      charCount: 35,
       embedded_text: "body text",
       full_transcription: "body text",
       visual_description: "a diagram",

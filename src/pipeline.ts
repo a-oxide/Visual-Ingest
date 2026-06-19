@@ -29,6 +29,7 @@ export interface ProcessOptions {
 export interface ProcessResult {
   page: number;
   class: string;
+  charCount: number;
   embedded_text: string | null;
   full_transcription: string;
   visual_description: string;
@@ -75,6 +76,7 @@ async function processImageFile(
   const stored: StoredPage = {
     page: 1,
     class: "image",
+    charCount: merged.length,
     embedded_text: null,
     full_transcription: vision.full_transcription,
     visual_description: vision.visual_description,
@@ -87,6 +89,7 @@ async function processImageFile(
   return [{
     page: 1,
     class: "image",
+    charCount: merged.length,
     embedded_text: null,
     full_transcription: vision.full_transcription,
     visual_description: vision.visual_description,
@@ -129,6 +132,7 @@ async function processPdfFile(
     const stored: StoredPage = {
       page: page.pageNum,
       class: page.pageClass,
+      charCount: merged.length,
       embedded_text: page.embeddedText,
       full_transcription: vision.full_transcription,
       visual_description: vision.visual_description,
@@ -141,6 +145,7 @@ async function processPdfFile(
     results[idx] = {
       page: page.pageNum,
       class: page.pageClass,
+      charCount: merged.length,
       embedded_text: page.embeddedText,
       full_transcription: vision.full_transcription,
       visual_description: vision.visual_description,

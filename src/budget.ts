@@ -39,11 +39,15 @@ export function truncateToBudget(
 
   let accumulated = "";
   let lastFit = 0;
-  for (const p of pages) {
+  for (let i = 0; i < pages.length; i++) {
+    const p = pages[i];
     const candidate = accumulated + "\n\n---\n## Page " + p.page + "\n\n" + p.merged;
-    if (estimateTokens(candidate) > budget) break;
-    accumulated = candidate;
-    lastFit = p.page;
+    if (i === 0 || estimateTokens(candidate) <= budget) {
+      accumulated = candidate;
+      lastFit = p.page;
+    } else {
+      break;
+    }
   }
 
   const remaining = pages.length - lastFit;

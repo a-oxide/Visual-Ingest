@@ -16,6 +16,7 @@ export interface Meta {
 export interface StoredPage {
   page: number;
   class: string;
+  charCount: number;
   embedded_text: string | null;
   full_transcription: string;
   visual_description: string;
