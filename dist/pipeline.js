@@ -97,7 +97,7 @@ export async function processFile(filePath, opts) {
     const docDir = getDocDir(projectDir, slug);
     const mtime = await getSourceMtime(filePath);
     const existingMeta = await readMeta(docDir);
-    if (shouldReuse(existingMeta, mtime, question)) {
+    if (shouldReuse(existingMeta, filePath, mtime, question)) {
         const results = [];
         for (let p = 1; p <= existingMeta.page_count; p++) {
             const stored = await readPage(docDir, p);

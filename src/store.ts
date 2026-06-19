@@ -43,10 +43,12 @@ export async function readMeta(dir: string): Promise<Meta | null> {
 
 export function shouldReuse(
   meta: Meta | null,
+  sourcePath: string,
   sourceMtime: number,
   question: string | undefined,
 ): boolean {
   if (!meta) return false;
+  if (meta.source_path !== sourcePath) return false;
   if (meta.source_mtime !== sourceMtime) return false;
   if (meta.question !== question) return false;
   return true;

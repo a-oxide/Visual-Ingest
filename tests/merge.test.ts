@@ -68,4 +68,17 @@ describe("mergePage — vision failure fallback", () => {
     const merged = mergePage("image-only", null, v);
     expect(merged).toContain("vision failed");
   });
+
+  test("malformed vision treated as failed (text-rich falls back to embedded)", () => {
+    const v: VisionResult = {
+      full_transcription: "partial text",
+      visual_description: "",
+      extra_text: null,
+      vision_status: "malformed",
+    };
+    const merged = mergePage("text-rich", "Body text", v);
+    expect(merged).toContain("Body text");
+    expect(merged).toContain("vision failed");
+    expect(merged).not.toContain("## Full transcription");
+  });
 });

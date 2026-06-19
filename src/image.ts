@@ -16,8 +16,9 @@ export async function loadImage(
   const metadata = await sharp(data).metadata();
 
   const longest = Math.max(metadata.width, metadata.height);
+  const scale = computeScale(longest, config.min_dim, config.max_dim);
 
-  if (longest <= config.max_dim) {
+  if (scale === 1) {
     return {
       imageBuffer: data,
       width: metadata.width,
@@ -25,7 +26,6 @@ export async function loadImage(
     };
   }
 
-  const scale = config.max_dim / longest;
   const newWidth = Math.round(metadata.width * scale);
   const newHeight = Math.round(metadata.height * scale);
 
@@ -39,4 +39,10 @@ export async function loadImage(
     width: newWidth,
     height: newHeight,
   };
+}
+
+function computeScale(longest: number, minDim: number, maxDim: number): number {
+  if (longest >= maxDim) return maxDim / longest;
+  if (longest < minDim) return minDim / longest;
+  return 1;
 }

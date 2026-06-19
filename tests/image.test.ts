@@ -26,7 +26,7 @@ describe("loadImage", () => {
     unlinkSync(tmpPath);
   });
 
-  test("does not upscale small images", async () => {
+  test("upscales small images to fit min_dim (preserves aspect ratio)", async () => {
     const small = await sharp({
       create: { width: 200, height: 100, channels: 3, background: "blue" },
     }).png().toBuffer();
@@ -37,8 +37,25 @@ describe("loadImage", () => {
       max_dim: 3072,
     } as any);
 
-    expect(result.width).toBe(200);
-    expect(result.height).toBe(100);
+    expect(result.width).toBe(768);
+    expect(result.height).toBe(384);
+
+    unlinkSync(tmpPath);
+  });
+
+  test("leaves mid-sized images untouched (within [min_dim, max_dim])", async () => {
+    const mid = await sharp({
+      create: { width: 1500, height: 1000, channels: 3, background: "green" },
+    }).png().toBuffer();
+    writeFileSync(tmpPath, mid);
+
+    const result = await loadImage(tmpPath, {
+      min_dim: 768,
+      max_dim: 3072,
+    } as any);
+
+    expect(result.width).toBe(1500);
+    expect(result.height).toBe(1000);
 
     unlinkSync(tmpPath);
   });

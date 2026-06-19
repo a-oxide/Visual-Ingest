@@ -26,7 +26,7 @@ describe("store", () => {
     expect(read).toEqual(meta);
   });
 
-  test("shouldReuse: true when mtime unchanged and no question", () => {
+  test("shouldReuse: true when path, mtime, and question all match", () => {
     const meta = {
       source_path: "/tmp/test.pdf",
       source_mtime: 1000,
@@ -37,7 +37,7 @@ describe("store", () => {
       question: undefined,
       status: "ok" as const,
     };
-    expect(shouldReuse(meta, 1000, undefined)).toBe(true);
+    expect(shouldReuse(meta, "/tmp/test.pdf", 1000, undefined)).toBe(true);
   });
 
   test("shouldReuse: false when mtime changed", () => {
@@ -51,7 +51,21 @@ describe("store", () => {
       question: undefined,
       status: "ok" as const,
     };
-    expect(shouldReuse(meta, 2000, undefined)).toBe(false);
+    expect(shouldReuse(meta, "/tmp/test.pdf", 2000, undefined)).toBe(false);
+  });
+
+  test("shouldReuse: false when source path differs (renamed or moved file)", () => {
+    const meta = {
+      source_path: "/tmp/test.pdf",
+      source_mtime: 1000,
+      page_count: 5,
+      model: "mimo-v2.5-free",
+      endpoint: "https://opencode.ai/zen/v1/chat/completions",
+      rendered_at: 1234567890,
+      question: undefined,
+      status: "ok" as const,
+    };
+    expect(shouldReuse(meta, "/tmp/other.pdf", 1000, undefined)).toBe(false);
   });
 
   test("shouldReuse: false when question differs", () => {
@@ -65,11 +79,11 @@ describe("store", () => {
       question: "old question",
       status: "ok" as const,
     };
-    expect(shouldReuse(meta, 1000, "new question")).toBe(false);
+    expect(shouldReuse(meta, "/tmp/test.pdf", 1000, "new question")).toBe(false);
   });
 
   test("shouldReuse: false when meta is null", () => {
-    expect(shouldReuse(null, 1000, undefined)).toBe(false);
+    expect(shouldReuse(null, "/tmp/test.pdf", 1000, undefined)).toBe(false);
   });
 
   test("writePage + readPage roundtrip", async () => {

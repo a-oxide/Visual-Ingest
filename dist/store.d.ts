@@ -22,7 +22,7 @@ export interface StoredPage {
 export declare function ensureDir(dir: string): Promise<void>;
 export declare function writeMeta(dir: string, meta: Meta): Promise<void>;
 export declare function readMeta(dir: string): Promise<Meta | null>;
-export declare function shouldReuse(meta: Meta | null, sourceMtime: number, question: string | undefined): boolean;
+export declare function shouldReuse(meta: Meta | null, sourcePath: string, sourceMtime: number, question: string | undefined): boolean;
 export declare function getSourceMtime(path: string): Promise<number>;
 export declare function writeImage(dir: string, pageNum: number, imageBuffer: Buffer, ext?: string): Promise<void>;
 export declare function writePage(dir: string, pageNum: number, data: StoredPage): Promise<void>;

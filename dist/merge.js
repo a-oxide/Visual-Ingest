@@ -1,5 +1,5 @@
 export function mergePage(pageClass, embeddedText, vision) {
-    if (vision.vision_status === "failed") {
+    if (vision.vision_status !== "ok") {
         if (embeddedText) {
             return embeddedText + "\n\n[vision failed — visual description unavailable]";
         }

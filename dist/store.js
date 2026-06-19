@@ -15,8 +15,10 @@ export async function readMeta(dir) {
     const data = await readFile(path, "utf-8");
     return JSON.parse(data);
 }
-export function shouldReuse(meta, sourceMtime, question) {
+export function shouldReuse(meta, sourcePath, sourceMtime, question) {
     if (!meta)
+        return false;
+    if (meta.source_path !== sourcePath)
         return false;
     if (meta.source_mtime !== sourceMtime)
         return false;
